@@ -8,6 +8,9 @@ import {
 } from "react";
 import isEqual from "fast-deep-equal";
 
+import { useIntl } from "react-intl";
+import { Notification } from "@douyinfe/semi-ui";
+
 /**
  * @description: 自定义useEffect的更新逻辑
  * @param {EffectCallback} effect 作用
@@ -80,4 +83,84 @@ export const useModalAction = initialProps => {
     visible: flag,
     ...props
   };
+};
+
+/**
+ * @description: 国际化消息提示
+ * @param {*}
+ * @return {{showSuccess: Function, showError: Function, showMessage: Function}}
+ */
+export const useMessageUtils = () => {
+  const intl = useIntl();
+
+  const showMessage = (method, { id, ...rest }) => {
+    Notification[method]({
+      title: intl.formatMessage({
+        id
+      }),
+      ...rest
+    });
+  };
+
+  const showSuccess = params => {
+    showMessage("success", params);
+  };
+
+  const showError = params => {
+    showMessage("error", params);
+  };
+
+  return { showSuccess, showError, showMessage };
+};
+
+/**
+ * @description: 自动递减计时器
+ * @param {Object} config
+ * @param {Object} config.countFrom
+ * @param {Object} config.countTo
+ * @param {Object} config.interval
+ * @param {Object} config.autoStart
+ * @return {*}
+ */
+export const useCountDown = ({
+  countFrom = 60,
+  countTo = 0,
+  interval = 1000,
+  autoStart = false
+} = {}) => {
+  const [count, setCount] = useState(countFrom);
+  const [isPaused, setPaused] = useState(!autoStart);
+  const timerRef = useRef(null);
+  const decreaseRef = useRef();
+
+  const start = () => {
+    setPaused(false);
+  };
+  const pause = () => {
+    setPaused(true);
+  };
+  const reset = () => {
+    clearInterval(timerRef.current);
+    setPaused(true);
+    setCount(countFrom);
+  };
+
+  decreaseRef.current = () => {
+    if (count > countTo) {
+      setCount(c => c - 1);
+    } else {
+      reset();
+    }
+  };
+  useEffect(() => {
+    if (isPaused) {
+      clearInterval(timerRef.current);
+    } else {
+      timerRef.current = setInterval(() => {
+        decreaseRef.current(); // 定时器内部使用ref防止闭包
+      }, interval);
+    }
+    return () => clearInterval(timerRef.current); // 清除定时器
+  }, [isPaused]);
+  return { count, start, pause, isPaused, reset };
 };

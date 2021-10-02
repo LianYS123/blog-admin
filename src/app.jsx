@@ -1,59 +1,43 @@
-import React, { useEffect } from "react";
-import { router } from "dva";
-import { ConfigProvider } from "antd";
+import React from "react";
+import { IntlProvider } from "react-intl";
 
-import { useRouteList } from "hooks";
-import loadable from "utils/loadable.js";
-import { antdLocales, locales } from "config/locales";
-import i from "react-intl-universal";
-import { useLanguage } from "hooks";
-import AppLayout from "layout";
-import routers from "config/routers";
-import DVA from "./models";
+import store from "models";
+
+import { localMap } from "constants";
+import { Provider, useSelector } from "react-redux";
+
+// 国际化
+import en_US from "locales/en_US";
+import zh_CN from "locales/zh_CN";
+
+import AppRoutes from "routers/AppRoutes";
 
 import "./app.less";
 
-const { Router, Route, Switch, Redirect } = router;
+const locales = {
+  en_US,
+  zh_CN
+};
 
-const AppRoutes = () => {
-  const routeList = useRouteList();
+const App = () => {
+  const { local } = useSelector(({ app }) => app);
   return (
-    <Switch>
-      <Route path={routers.LOGIN} component={loadable("login")} />
-      <Route path="/pages">
-        <AppLayout>
-          <Switch>
-            {routeList.map(({ path, component }) => (
-              <Route path={path} component={component} key={path} />
-            ))}
-            <Redirect to={routers.HOME} />
-          </Switch>
-        </AppLayout>
-      </Route>
-      <Redirect to={routers.HOME} />
-    </Switch>
+    <IntlProvider
+      messages={locales[local]}
+      locale={localMap[local]}
+      defaultLocale="en"
+    >
+      <AppRoutes />
+    </IntlProvider>
   );
 };
 
-const WrapApp = props => {
-  const { language } = useLanguage();
-  useEffect(() => {
-    i.init({
-      locales,
-      currentLocale: language
-    });
-  }, []);
+const WrapApp = () => {
   return (
-    <Router {...props}>
-      <ConfigProvider locale={antdLocales}>
-        <AppRoutes />
-      </ConfigProvider>
-    </Router>
+    <Provider store={store}>
+      <App />
+    </Provider>
   );
 };
 
-DVA.router(({ history }) => <WrapApp history={history} />);
-
-const AppContainer = DVA.start();
-
-export default AppContainer;
+export default WrapApp;

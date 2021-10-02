@@ -1,36 +1,56 @@
-import i from "react-intl-universal";
-import { Form, Input, Button } from "antd";
-import { login } from "services/login";
+import React from "react";
 import { useMutation } from "hooks";
-import history from "utils/history";
-import routers from "config/routers";
+import routers from "routers";
+import { useHistory } from "react-router";
+import { AUTH_LOGIN } from "services/API";
+import { FormattedMessage } from "react-intl";
+import { Button, Form } from "@douyinfe/semi-ui";
+import { useDispatch } from "react-redux";
+import { appSlice } from "models/app";
 
 const Login = () => {
-  const [submit, { loading }] = useMutation(login);
+  const [submit, { loading }] = useMutation(AUTH_LOGIN);
+  const dispatch = useDispatch();
+  const history = useHistory();
 
   const handleLogin = async values => {
-    const { token, userInfos, code, userId } = await submit({
-      ...values,
-      platform: "MERCHANT",
-      system: "mer"
-    });
+    // history.push(routers.HOME);
+    const result = await submit(values);
+    const { data: token, userInfos, code } = result;
 
     if (code === "0000") {
       localStorage.setItem("acc", token);
+      dispatch(appSlice.actions.setToken(token));
       history.push(routers.HOME);
     }
   };
 
   return (
-    <Form onFinish={handleLogin}>
-      <h2>{i.get("login_LOGIN_TITLE")}</h2>
-      <Form.Item name={"account"} rules={[{ required: true }]}>
-        <Input size="large" placeholder="Account" />
-      </Form.Item>
-
-      <Form.Item name={"password"} rules={[{ required: true }]}>
-        <Input.Password size="large" placeholder="Password" />
-      </Form.Item>
+    <Form
+      labelAlign="right"
+      labelCol={{ span: 6 }}
+      labelPosition="left"
+      className="w-96 mt-64 mx-auto"
+      onSubmit={handleLogin}
+    >
+      <div className="text-center text-lg">
+        <FormattedMessage id="WEBSITE_NAME" />
+      </div>
+      <Form.Input
+        field="username"
+        label="用户名"
+        rules={[{ required: true }]}
+        size="large"
+        placeholder="请输入用户名"
+      />
+      <Form.Input
+        type="password"
+        field="password"
+        label="密码"
+        rules={[{ required: true }]}
+        size="large"
+        placeholder="请输入密码"
+      />
 
       <Button
         loading={loading}
@@ -39,7 +59,7 @@ const Login = () => {
         htmlType="submit"
         type="primary"
       >
-        {i.get("login_sure_login")}
+        登录
       </Button>
     </Form>
   );

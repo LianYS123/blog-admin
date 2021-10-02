@@ -1,6 +1,6 @@
-import i from "react-intl-universal";
+import React from "react";
 
 const Home = () => {
-  return <div>{i.get("APP_NAME")}</div>;
+  return <div>home</div>;
 };
 export default Home;
