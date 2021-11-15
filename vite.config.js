@@ -18,7 +18,7 @@ const getAligns = () => {
 
 export default ({ command, mode }) => {
   const proxy = {
-    "/api": {
+    "/blog/api": {
       target: "http://localhost:8090",
       changeOrigin: true
     }

@@ -25,7 +25,7 @@ const App = () => {
     <IntlProvider
       messages={locales[local]}
       locale={localMap[local]}
-      defaultLocale="en"
+      defaultLocale="zh"
     >
       <AppRoutes />
     </IntlProvider>
