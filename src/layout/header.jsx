@@ -4,7 +4,6 @@ import { useIntl } from "react-intl";
 import { useHistory, useLocation } from "react-router";
 import { useSelector } from "react-redux";
 import classNames from "classnames";
-import Favicon from "./favicon";
 
 // header
 const AppHeader = ({ onMenuIconClick, top }) => {
@@ -18,10 +17,10 @@ const AppHeader = ({ onMenuIconClick, top }) => {
       className={classNames(
         "flex justify-between items-center pl-4 pr-6 py-3 z-20 transition",
         {
-          shadow: top > 10,
-          "absolute left-0 right-0 top-0": isHomePage,
-          "bg-transparent text-white": isHomePage && top <= 300,
-          "bg-gray-50 text-black": isHomePage && top > 300
+          shadow: top > 10
+          // "absolute left-0 right-0 top-0": isHomePage,
+          // "bg-transparent text-white": isHomePage && top <= 300,
+          // "bg-gray-50 text-black": isHomePage && top > 300
         }
       )}
     >
@@ -59,33 +58,9 @@ const AppHeader = ({ onMenuIconClick, top }) => {
             </g>
           </g>
         </svg>
-        {/* <span
-          onClick={() => history.push(routers.HOME)}
-          className="text-lg font-medium cursor-pointer hover:underline"
-        >
-          {intl.formatMessage({ id: "WEBSITE_NAME" })}
-        </span> */}
-        {/* <input
-          placeholder="Search"
-          className="border rounded py-2 px-3 shadow w-56 h-8 border-transparent focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent"
-        /> */}
       </div>
       <div className="space-x-4 font-semibold text-sm">
         <span className="space-x-4">
-          <button
-            onClick={() => history.push(routers.ARTICLE_LIST)}
-            className="hover:underline"
-          >
-            文章
-          </button>
-
-          <button
-            onClick={() => history.push(routers.EDITOR)}
-            className="hover:underline"
-          >
-            写文章
-          </button>
-
           {userId ? (
             <span className="text-sm">{username}</span>
           ) : (

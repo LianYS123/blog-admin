@@ -64,7 +64,7 @@ const DictManager = () => {
     }
   ];
   return (
-    <div>
+    <div className="container">
       <div className="flex justify-between">
         <div className="flex space-x-2 my-2">
           <Input onEnterPress={handleSearch} onChange={setKeyword} />
